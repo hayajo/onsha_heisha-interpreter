@@ -7,6 +7,7 @@ type Lexer struct {
 	position     int  // カーソル位置
 	readPosition int  // カーソル位置の次の位置
 	ch           byte // カーソル位置の文字
+	insertSemi   bool
 }
 
 func New(input string) *Lexer {
@@ -30,47 +31,59 @@ func (l *Lexer) NextToken() token.Token {
 
 	l.skipWhiteSpace()
 
-	switch l.ch {
-	case '=':
-		tok = newToken(token.ASSIGN, l.ch)
-	case '+':
-		tok = newToken(token.PLUS, l.ch)
-	case '-':
-		tok = newToken(token.MINUS, l.ch)
-	case '*':
-		tok = newToken(token.ASTERISK, l.ch)
-	case '/':
-		tok = newToken(token.SLASH, l.ch)
-	case '(':
-		tok = newToken(token.LPAREN, l.ch)
-	case ')':
-		tok = newToken(token.RPAREN, l.ch)
-	case ';':
-		tok = newToken(token.SEMICOLON, l.ch)
-	case 0:
-		tok.Literal = ""
-		tok.Type = token.EOF
+	insertSemi := false
+
+	switch ch := l.ch; {
+	case isLetter(ch):
+		tok.Literal = l.readIdentifier()
+		tok.Type = token.LookupIdent(tok.Literal)
+		insertSemi = true
+	case isDigit(ch):
+		tok.Type = token.INT
+		tok.Literal = l.readNumber()
+		insertSemi = true
 	default:
-		if isLetter(l.ch) {
-			tok.Literal = l.readIdentifier()
-			tok.Type = token.LookupIdent(tok.Literal)
-			return tok
-		} else if isDigit(l.ch) {
-			tok.Type = token.INT
-			tok.Literal = l.readNumber()
-			return tok
-		} else {
+		switch ch {
+		case '=':
+			tok = newToken(token.ASSIGN, l.ch)
+		case '+':
+			tok = newToken(token.PLUS, l.ch)
+		case '-':
+			tok = newToken(token.MINUS, l.ch)
+		case '*':
+			tok = newToken(token.ASTERISK, l.ch)
+		case '/':
+			tok = newToken(token.SLASH, l.ch)
+		case '(':
+			tok = newToken(token.LPAREN, l.ch)
+		case ')':
+			tok = newToken(token.RPAREN, l.ch)
+			insertSemi = true
+		case ';':
+			tok = newToken(token.SEMICOLON, l.ch)
+		case '\n':
+			tok = newToken(token.SEMICOLON, ';')
+		case 0:
+			if l.insertSemi {
+				tok = newToken(token.SEMICOLON, ';')
+				l.insertSemi = false
+				return tok
+			}
+			tok.Literal = ""
+			tok.Type = token.EOF
+		default:
 			tok = newToken(token.ILLEGAL, l.ch)
 		}
+		l.readChar()
 	}
 
-	l.readChar()
+	l.insertSemi = insertSemi
 
 	return tok
 }
 
 func (l *Lexer) skipWhiteSpace() {
-	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
+	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' && !l.insertSemi || l.ch == '\r' {
 		l.readChar()
 	}
 }

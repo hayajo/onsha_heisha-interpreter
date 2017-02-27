@@ -16,7 +16,10 @@ val + 10;
 abc123;
 abc123def;
 123abc;
-`
+123
+abc
+(1 + 2)`
+
 	tests := []struct {
 		expectedType    token.TokenType
 		expectedLiteral string
@@ -58,6 +61,16 @@ abc123def;
 		{token.SEMICOLON, ";"},
 		{token.INT, "123"},
 		{token.IDENT, "abc"},
+		{token.SEMICOLON, ";"},
+		{token.INT, "123"},
+		{token.SEMICOLON, ";"},
+		{token.IDENT, "abc"},
+		{token.SEMICOLON, ";"},
+		{token.LPAREN, "("},
+		{token.INT, "1"},
+		{token.PLUS, "+"},
+		{token.INT, "2"},
+		{token.RPAREN, ")"},
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}
