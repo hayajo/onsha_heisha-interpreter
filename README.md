@@ -7,4 +7,5 @@ ref. [Writing An Interpreter In Go | Thorsten Ball](https://interpreterbook.com/
 * [イントロダクション](00.md)
 * [字句解析（Lexing）](01.md)
 * [構文解析（Parsing）](02.md)
+    - [関数](02a.md)
 
