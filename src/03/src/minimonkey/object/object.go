@@ -17,7 +17,7 @@ type Object interface {
 
 type Null struct{}
 
-func (n *Null) Type() ObjectType { return INTEGER_OBJ }
+func (n *Null) Type() ObjectType { return NULL_OBJ }
 func (n *Null) Inspect() string  { return "null" }
 
 type Integer struct {
