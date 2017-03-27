@@ -93,8 +93,11 @@ func (bs *BlockStatement) String() string {
 
 	out.WriteString("{")
 
-	for _, s := range bs.Statements {
-		out.WriteString(" " + s.String() + " ")
+	if len(bs.Statements) > 0 {
+		for _, s := range bs.Statements {
+			out.WriteString(" " + s.String())
+		}
+		out.WriteString(" ")
 	}
 
 	out.WriteString("}")
