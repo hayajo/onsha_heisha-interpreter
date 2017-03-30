@@ -62,9 +62,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return val
 
-		// // TODO
-		// case *ast.FunctionLiteral
-		// case *ast.CallExpression
+	// // TODO
+	// case *ast.FunctionLiteral:
+	// case *ast.CallExpression:
 	}
 
 	return nil
